@@ -7,7 +7,7 @@ const CacheCleanerMixin = require("../mixin/cache.cleaner.mixin.js");
 module.exports = {
 	name: "webhooks",
 	mixins: [
-		DbService("urls"),
+		DbService("follows"),
 		CacheCleanerMixin([
 			"cache.clean.users",
 			"cache.clean.follows",
@@ -15,7 +15,7 @@ module.exports = {
 	],
 	actions: {
 		register: {
-			//auth: "required",
+			auth: "required",
 			parameters: {
 				targetUrl: { type: "string" }
 			},
@@ -27,39 +27,10 @@ module.exports = {
 				var x = this.adapter.insert(dataEntry);
 				console.log(x);
 				return x;
-				/*
-								async handler(ctx) {
-									const { follow, user } = ctx.params;
-									const item = await this.findByFollowAndUser(follow, user);
-									if (item)
-										throw new MoleculerClientError("User has already followed");
-					
-									return await this._create(ctx, { follow, user, createdAt: new Date() });
-								
-								}
-				
-				
-				*/
-
-
-				/*
-			return this.validateEntity(entity)
-				.then(() => {
-	
-					entity.createdAt = new Date();
-					entity.updatedAt = new Date();
-	
-					return this.adapter.insert(entity)
-						.then(doc => this.transformDocuments(ctx, { populate: ["author"] }, doc))
-						.then(entity => this.transformResult(ctx, entity, ctx.meta.user))
-						.then(json => this.entityChanged("created", json, ctx).then(() => json));
-				});
-				*/
-				//return uniqueID;
 			}
 		},
 		update: {
-			//auth: "required",
+			auth: "required",
 			parameters: {
 				uniqueID: { type: "number" },
 				newTargetUrl: { type: "string" }
@@ -87,7 +58,7 @@ module.exports = {
 				}
 		},
 		list: {
-			//auth: "required",
+			auth: "required",
 			handler(ctx) {
 
 				let dataEntry = { 'targetUrl': "abc", 'uniqueID': "xyz" };
@@ -97,7 +68,7 @@ module.exports = {
 			}
 		},
 		delete: {
-			//auth: "required",
+			auth: "required",
 			parameters: {
 				uniqueID: { type: "number" }
 			},
@@ -121,7 +92,7 @@ module.exports = {
 		},
 		
 		trigger : {
-			//auth: "required",
+			auth: "required",
 			parameters: {
 				ipAddress : { type: "string" }
 			},
