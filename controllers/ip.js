@@ -21,7 +21,7 @@ router.get('/ip', function (req, res) {
         // Printing the response
         .then(result => {
             console.log(result);
-            res.render('index', { data: result });
+            res.send(result);
         })
         .catch(err => console.error(`Error occured! ${err.message}`));
 
