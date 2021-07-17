@@ -1,0 +1,28 @@
+<table>
+    <th>
+        <td>
+            TargetUrl
+        </td>
+        <td>
+            uniqueID
+        </td>
+    </th>
+    <% for(i=0;i<data.length;i++){ %>
+        <tr>
+
+            <td>
+                
+                    <%= data[i].targetUrl %>
+                
+            </td>
+            <td>
+                
+                    <%= data[i].uniqueID %>
+                
+
+            </td>
+
+
+        </tr> 
+        <% } %>
+</table>
