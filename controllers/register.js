@@ -14,11 +14,11 @@ router.get('/register', function (req, res) {
     broker.start()
         // Calling the register action of webhooks service
         .then(() => broker.call("webhooks.register", {
-            targetUrl: "abc.com"
+            targetUrl: req.body.targetUrl
         }))
         // Printing the response
         .then(result => {
-            console.log(result);
+            //console.log(result);
             res.render('index', { data: [result] });
         })
         .catch(err => console.error(`Error occured! ${err.message}`));

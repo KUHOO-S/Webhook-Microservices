@@ -14,11 +14,11 @@ router.get('/delete', function (req, res) {
     broker.start()
         // Calling the register action of webhooks service
         .then(() => broker.call("webhooks.delete", {
-            uniqueID: 4500
+            uniqueID: req.body.uniqueID
         }))
         // Printing the response
         .then(result => {
-            console.log(result);
+            //console.log(result);
             res.send("Deleted Successfully")
             //res.render('index', { data: [result] });
         })

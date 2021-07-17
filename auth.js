@@ -8,7 +8,6 @@ function setUser(req, res, next) {
   }
   if (userRole == "admin") {
     req.user = userRole
-    console.log("truei")
     next()
   }
   else {

@@ -5,7 +5,7 @@ const DbService = require("../mixin/db.mixin.js");
 const CacheCleanerMixin = require("../mixin/cache.cleaner.mixin.js");
 
 require('dotenv').config();
-
+var request = require('request');
 module.exports = {
 	name: "webhooks",
 	mixins: [
@@ -23,12 +23,9 @@ module.exports = {
 			},
 			handler(ctx) {
 				var uniqueID = 4500;
-				console.log(uniqueID);
-				console.log(ctx.params.targetUrl)
 				let dataEntry = { 'targetUrl': ctx.params.targetUrl, 'uniqueID': uniqueID };
-				var x = this.adapter.insert(dataEntry);
-				console.log(x);
-				return x;
+				var dbData = this.adapter.insert(dataEntry);
+				return dbData;
 			}
 		},
 		update: {
@@ -38,7 +35,6 @@ module.exports = {
 				newTargetUrl: { type: "string" }
 			},
 			handler(ctx) {
-				console.log(ctx.params.newTargetUrl)
 				let dataEntry = { 'targetUrl': ctx.params.newTargetUrl, 'uniqueID': ctx.params.uniqueID };
 				var _id;
 				return this.Promise.resolve()
@@ -48,8 +44,8 @@ module.exports = {
 								.then(data => {
 									if (!data)
 										return this.Promise.reject(new MoleculerClientError("Oops! no such id found"));
-									_id=data._id;
-									});
+									_id = data._id;
+								});
 					})
 					.then(() => {
 						const update = {
@@ -57,16 +53,15 @@ module.exports = {
 						};
 						return this.adapter.updateById(_id, update);
 					})
-				}
+			}
 		},
 		list: {
 			auth: "required",
 			handler(ctx) {
 
 				let dataEntry = { 'targetUrl': "abc", 'uniqueID': "xyz" };
-				var x = this.adapter.find();
-				console.log(x);
-				return x;
+				var dbData = this.adapter.find();
+				return dbData;
 			}
 		},
 		delete: {
@@ -75,33 +70,64 @@ module.exports = {
 				uniqueID: { type: "number" }
 			},
 			handler(ctx) {
-				console.log("hi",ctx.params.uniqueID)
-				//let dataEntry = { 'targetUrl': ctx.params.newTargetUrl, 'uniqueID': ctx.params.uniqueID };
 				var _id;
 				return this.Promise.resolve()
 					.then(() => {
-							return this.adapter.findOne({ uniqueID: ctx.params.uniqueID })
-								.then(data => {
-									if (!data)
-										return this.Promise.reject(new MoleculerClientError("Oops! no such id found"));
-									_id=data._id;
-									});
+						return this.adapter.findOne({ uniqueID: ctx.params.uniqueID })
+							.then(data => {
+								if (!data)
+									return this.Promise.reject(new MoleculerClientError("Oops! no such id found"));
+								_id = data._id;
+							});
 					})
 					.then(() => {
 						return this.adapter.removeById(_id);
 					})
-				}
+			}
 		},
-		
-		trigger : {
+
+		trigger: {
 			auth: "required",
 			parameters: {
-				ipAddress : { type: "string" }
+				ipAddress: { type: "string" }
 			},
 			handler(ctx) {
-				console.log(ctx.params.ipAddress)
-				return ctx.params.ipAddress;
+				return this.adapter.find().
+					then((dbData) => {
+						return this.sendReq(dbData, ctx.params.ipAddress);
+					})
 			}
+		}
+	},
+	methods: {
+
+		sendReq(dbData, ipAddress) {
+			console.log(dbData)
+			var count = 0;
+			var i = 0;
+			for (i = 0; i < dbData.length; i++) {
+				var fl = 0;
+				var options = {
+					'method': 'POST',
+					'url': dbData[i].targetUrl,
+					'headers': {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ "ip": ipAddress, "time": Date() })
+				};
+				request(options, function (error, response) {
+					if (error)
+						console.log("err", dbData[i].targetUrl)
+					else {
+						console.log("success", count);
+						count = count + 1;
+					}
+
+				});
+
+
+			}
+			return "Sent req= " + String(i);
 		}
 	}
 };

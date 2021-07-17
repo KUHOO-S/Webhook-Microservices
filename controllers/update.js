@@ -14,12 +14,12 @@ router.get('/update', function (req, res) {
     broker.start()
         // Calling the update action of webhooks service
         .then(() => broker.call("webhooks.update", { 
-            uniqueID: 1234,
-            newTargetUrl: "lol.com" 
+            uniqueID: req.body.uniqueID,
+            newTargetUrl:  req.body.newTargetUrl
         }))
         // Printing the response
         .then(result => {
-            console.log(result);
+            //console.log(result);
             res.render('index', { data: result });
         })
         .catch(err => console.error(`Error occured! ${err.message}`));
