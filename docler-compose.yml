@@ -1,0 +1,30 @@
+version: "3.0"
+
+services:
+  webhooks:
+    build:
+      context: .
+    image: webhookmicroservices
+    env_file: docker-compose.env
+    environment:
+      SERVICES: webhooks
+    links:
+      - nats
+      - mongo
+    depends_on:
+      - nats
+      - mongo
+    #deploy:
+    #  replicas: 2
+
+  nats:
+    image: nats
+    ports:
+      - "4222:4222"
+
+  mongo:
+    image: mongo
+    volumes:
+      - ./db:/data/db
+
+  

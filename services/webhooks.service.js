@@ -4,10 +4,12 @@ const { MoleculerClientError } = require("moleculer").Errors;
 const DbService = require("../mixin/db.mixin.js");
 const CacheCleanerMixin = require("../mixin/cache.cleaner.mixin.js");
 
+require('dotenv').config();
+
 module.exports = {
 	name: "webhooks",
 	mixins: [
-		DbService("follows"),
+		DbService(process.env.collection),
 		CacheCleanerMixin([
 			"cache.clean.users",
 			"cache.clean.follows",
