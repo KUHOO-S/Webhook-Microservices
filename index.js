@@ -1,33 +1,25 @@
-var express=require('express')
-var bodyParser=require('body-parser');
-var admin=require('./controllers/admin');
-var app=express();
-const { authUser, authRole } = require('./auth')
-app.set('view engine','ejs');
+var express = require('express')
+var admin = require('./controllers/admin');
+const setUser = require('./auth')
+require('dotenv').config();
 
-//var urlencoded=bodyParser.urlencoded({extended:false});
+var app = express();
+
+app.set('view engine', 'ejs');
+
 
 app.use(express.static('./public'));
+app.use(express.json())
+app.use(setUser)          //for admin access
 
-app.use(setUser)
-var adminController=require('./controllers/adminController');
 
-app.use('/admin', authUser, authRole,admin);
-//adminController(app);
-//app.use('/admin',admin);
+app.use('/admin', admin);
+
 
 app.use('*', (req, res) => {
-    res.send("<h1 align='center'>Oops wrong Url</h1>");
+  res.send("<h1 align='center'>Oops wrong Url</h1>");
 });
 
-function setUser(req, res, next) {
-    const userRole = req;
-    console.log(userRole);
-    if (userRole=="admin") {
-      req.user = userRole
-    }
-    next()
-  }
 
-console.log("Listening on port : 3000");
-app.listen(3100);
+console.log("Listening on port :",process.env.PORT);
+app.listen(process.env.PORT);

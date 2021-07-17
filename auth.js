@@ -1,24 +1,19 @@
-function authUser(req, res, next) {
-    if (req.user == null) {
-      res.status(403)
-      return res.send('You need to sign in')
-    }
-  
+
+function setUser(req, res, next) {
+  const userRole = req.body.userRole
+
+  if (req.body.userRole == null) {
+    res.status(403)
+    return res.send('You need to sign in')
+  }
+  if (userRole == "admin") {
+    req.user = userRole
+    console.log("truei")
     next()
   }
-  
-  function authRole() {
-    return (req, res, next) => {
-      if (req.user !== "admin") {
-        res.status(401)
-        return res.send('Not allowed')
-      }
-  
-      next()
-    }
+  else {
+    res.status(401)
+    return res.send('Not allowed')
   }
-  
-  module.exports = {
-    authUser,
-    authRole
-  }
+}
+  module.exports = setUser;
