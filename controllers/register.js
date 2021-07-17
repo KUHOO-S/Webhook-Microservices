@@ -19,7 +19,7 @@ router.get('/register', function (req, res) {
         // Printing the response
         .then(result => {
             console.log(result);
-            res.render('index', { data: result });
+            res.render('index', { data: [result] });
         })
         .catch(err => console.error(`Error occured! ${err.message}`));
 

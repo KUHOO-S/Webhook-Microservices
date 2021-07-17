@@ -14,8 +14,8 @@ router.get('/update', function (req, res) {
     broker.start()
         // Calling the update action of webhooks service
         .then(() => broker.call("webhooks.update", { 
-            uniqueID: 500,
-            newTargetUrl: "Cherry.com" 
+            uniqueID: 1234,
+            newTargetUrl: "lol.com" 
         }))
         // Printing the response
         .then(result => {

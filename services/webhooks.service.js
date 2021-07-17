@@ -7,7 +7,7 @@ const CacheCleanerMixin = require("../mixin/cache.cleaner.mixin.js");
 module.exports = {
 	name: "webhooks",
 	mixins: [
-		DbService("follows"),
+		DbService("urls"),
 		CacheCleanerMixin([
 			"cache.clean.users",
 			"cache.clean.follows",
@@ -20,7 +20,7 @@ module.exports = {
 				targetUrl: { type: "string" }
 			},
 			handler(ctx) {
-				var uniqueID = 500;
+				var uniqueID = 4500;
 				console.log(uniqueID);
 				console.log(ctx.params.targetUrl)
 				let dataEntry = { 'targetUrl': ctx.params.targetUrl, 'uniqueID': uniqueID };
@@ -96,7 +96,30 @@ module.exports = {
 				return x;
 			}
 		},
-
+		delete: {
+			//auth: "required",
+			parameters: {
+				uniqueID: { type: "number" }
+			},
+			handler(ctx) {
+				console.log("hi",ctx.params.uniqueID)
+				//let dataEntry = { 'targetUrl': ctx.params.newTargetUrl, 'uniqueID': ctx.params.uniqueID };
+				var _id;
+				return this.Promise.resolve()
+					.then(() => {
+							return this.adapter.findOne({ uniqueID: ctx.params.uniqueID })
+								.then(data => {
+									if (!data)
+										return this.Promise.reject(new MoleculerClientError("Oops! no such id found"));
+									_id=data._id;
+									});
+					})
+					.then(() => {
+						return this.adapter.removeById(_id);
+					})
+				}
+		},
+		
 		trigger : {
 			//auth: "required",
 			parameters: {

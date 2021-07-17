@@ -11,7 +11,18 @@ broker.createService(WebhooksService);
 
 router.get('/delete', function (req, res) {
     console.log("@route= /delete");
-    //res.render('todo', { datatodo: [res.targetUrl,res.uniqueID] });
+    broker.start()
+        // Calling the register action of webhooks service
+        .then(() => broker.call("webhooks.delete", {
+            uniqueID: 4500
+        }))
+        // Printing the response
+        .then(result => {
+            console.log(result);
+            res.send("Deleted Successfully")
+            //res.render('index', { data: [result] });
+        })
+        .catch(err => console.error(`Error occured! ${err.message}`));
 
 });
 
